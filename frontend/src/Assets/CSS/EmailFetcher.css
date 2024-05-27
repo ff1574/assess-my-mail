@@ -1,0 +1,32 @@
+.email-fetcher-card {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background: #ffffff;
+}
+
+.fetcher-title {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #1890ff;
+}
+
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+
+.emails-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.email-card {
+  margin-bottom: 15px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
