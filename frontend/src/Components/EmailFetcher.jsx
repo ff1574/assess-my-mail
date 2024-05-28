@@ -1,13 +1,51 @@
-import React, { useState } from "react";
-import { Button, Input, message, Card, Typography, Spin } from "antd";
+import React, { useState, useEffect } from "react";
+import {
+  Button,
+  Input,
+  message,
+  Card,
+  Typography,
+  Spin,
+  Form,
+  Modal,
+} from "antd";
 import axios from "axios";
+import queryString from "query-string";
+import EmailModal from "./EmailModal"; // Import the EmailModal component
+import "../Assets/CSS/EmailFetcher.css";
 
 const { Title } = Typography;
 
-const EmailFetcher = () => {
+const EmailFetcher = ({ accessToken: initialAccessToken }) => {
   const [loading, setLoading] = useState(false);
   const [emails, setEmails] = useState([]);
-  const [accessToken, setAccessToken] = useState("");
+  const [accessToken, setAccessToken] = useState(initialAccessToken);
+  const [refreshToken, setRefreshToken] = useState("");
+  const [expiryDate, setExpiryDate] = useState(null);
+  const [maxResults, setMaxResults] = useState(10);
+  const [selectedEmail, setSelectedEmail] = useState(null);
+
+  useEffect(() => {
+    const params = queryString.parse(window.location.search);
+    if (params.access_token) {
+      setAccessToken(params.access_token);
+      setRefreshToken(params.refresh_token);
+      setExpiryDate(params.expiry_date);
+      localStorage.setItem("accessToken", params.access_token);
+      localStorage.setItem("refreshToken", params.refresh_token);
+      localStorage.setItem("expiryDate", params.expiry_date);
+      window.history.replaceState({}, document.title, "/"); // Reset the URL
+    } else {
+      const storedToken = localStorage.getItem("accessToken");
+      const storedRefreshToken = localStorage.getItem("refreshToken");
+      const storedExpiryDate = localStorage.getItem("expiryDate");
+      if (storedToken && storedRefreshToken && storedExpiryDate) {
+        setAccessToken(storedToken);
+        setRefreshToken(storedRefreshToken);
+        setExpiryDate(storedExpiryDate);
+      }
+    }
+  }, []);
 
   const handleAuth = () => {
     window.location.href = "http://localhost:5000/auth";
@@ -18,7 +56,17 @@ const EmailFetcher = () => {
     try {
       const response = await axios.post("http://localhost:5000/fetch-emails", {
         access_token: accessToken,
+        refresh_token: refreshToken,
+        expiry_date: expiryDate,
+        maxResults: maxResults,
       });
+
+      if (response.data.newAccessToken) {
+        setAccessToken(response.data.newAccessToken);
+        localStorage.setItem("accessToken", response.data.newAccessToken);
+        message.success("Access token refreshed");
+      }
+
       setEmails(response.data.emails);
       setLoading(false);
       message.success("Emails fetched successfully!");
@@ -29,32 +77,69 @@ const EmailFetcher = () => {
     }
   };
 
+  const handleEmailClick = (email) => {
+    setSelectedEmail(email);
+  };
+
+  const handleModalClose = () => {
+    setSelectedEmail(null);
+  };
+
   return (
     <Card className="email-fetcher-card" bordered={false}>
-      <Title level={3} className="fetcher-title">
+      <Title level={2} className="fetcher-title">
         Fetched Emails
       </Title>
-      <Button type="primary" onClick={handleAuth}>
+      <Button type="primary" className="auth-button" onClick={handleAuth}>
         Authenticate with Google
       </Button>
       <Input
-        placeholder="Paste your access token here"
+        className="access-token-input"
+        placeholder="Access token"
         value={accessToken}
         onChange={(e) => setAccessToken(e.target.value)}
       />
-      <Button type="primary" onClick={handleFetchEmails}>
-        Fetch Emails
-      </Button>
+      <Form layout="inline" style={{ marginBottom: 16 }}>
+        <Form.Item label="Number of Emails">
+          <Input
+            type="number"
+            value={maxResults}
+            onChange={(e) => setMaxResults(Number(e.target.value))}
+            min={1}
+            max={1000}
+          />
+        </Form.Item>
+        <Form.Item>
+          <Button
+            type="primary"
+            className="fetch-button"
+            onClick={handleFetchEmails}
+          >
+            Fetch Emails
+          </Button>
+        </Form.Item>
+      </Form>
       {loading ? (
         <Spin size="large" className="loading-spinner" />
       ) : (
         <div className="emails-list">
           {emails.map((email, index) => (
-            <Card key={index} className="email-card">
-              <Title level={4}>{email.snippet}</Title>
+            <Card
+              key={index}
+              className="email-card"
+              onClick={() => handleEmailClick(email)}
+            >
+              <Title level={4}>{email.subject}</Title>
             </Card>
           ))}
         </div>
+      )}
+      {selectedEmail && (
+        <EmailModal
+          email={selectedEmail}
+          visible={!!selectedEmail}
+          onClose={handleModalClose}
+        />
       )}
     </Card>
   );

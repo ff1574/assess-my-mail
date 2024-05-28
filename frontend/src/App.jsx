@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Layout, Typography, message } from "antd";
-import EmailForm from "./Components/EmailForm";
+import LoginForm from "./Components/LoginForm";
 import EmailFetcher from "./Components/EmailFetcher";
 import "./Assets/CSS/main.css";
 
@@ -9,10 +9,19 @@ const { Title } = Typography;
 
 const App = () => {
   const [formData, setFormData] = useState(null);
+  const [accessToken, setAccessToken] = useState(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("access_token");
+    if (token) {
+      setAccessToken(token);
+    }
+  }, []);
 
   const handleFormSubmit = (data) => {
     setFormData(data);
-    message.success("Fetching emails...");
+    message.success("Login successful!");
   };
 
   return (
@@ -22,18 +31,21 @@ const App = () => {
       </Header>
       <Content className="content">
         <div className="site-layout-content">
-          {!formData ? (
-            <EmailForm onSubmit={handleFormSubmit} />
+          {!formData && !accessToken ? (
+            <LoginForm onSubmit={handleFormSubmit} />
           ) : (
             <EmailFetcher
-              email={formData.email}
-              password={formData.password}
-              host={formData.host}
+              email={formData?.email}
+              password={formData?.password}
+              host={formData?.host}
+              accessToken={accessToken}
             />
           )}
         </div>
       </Content>
-      <Footer style={{ textAlign: "center" }}>AssessMyMail ©2023</Footer>
+      <Footer style={{ textAlign: "center" }}>
+        AssessMyMail ©{new Date().getFullYear()}
+      </Footer>
     </Layout>
   );
 };

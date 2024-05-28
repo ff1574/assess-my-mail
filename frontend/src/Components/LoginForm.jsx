@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Form, Input, Button, Select, Typography, Card } from "antd";
 import { MailOutlined, LockOutlined } from "@ant-design/icons";
-import "../Assets/CSS/EmailForm.css";
+import "../Assets/CSS/LoginForm.css";
 
 const { Option } = Select;
 const { Title } = Typography;
