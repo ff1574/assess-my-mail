@@ -1,0 +1,50 @@
+.scan-ai-card {
+  max-width: 800px;
+  width: 100%;
+  margin: 20px auto;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(145deg, #f0f0f0, #ffffff);
+}
+
+.scan-ai-title {
+  text-align: center;
+  margin-bottom: 20px;
+  font-weight: bold;
+  color: #1890ff;
+}
+
+.scan-ai-button {
+  display: block;
+  width: 100%;
+  margin-top: 20px;
+  background: #1890ff;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: background 0.3s ease;
+}
+
+.scan-ai-button:hover {
+  background: #40a9ff;
+}
+
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.analysis-result {
+  margin-top: 20px;
+  background: #fafafa;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-size: 16px;
+  color: #333;
+  line-height: 1.6;
+}

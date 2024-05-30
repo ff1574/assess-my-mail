@@ -53,3 +53,32 @@
 .email-card .ant-typography {
   margin-bottom: 8px;
 }
+
+.scan-ai-button {
+  color: white;
+  text-decoration: none;
+  font-size: 25px;
+  border: none;
+  background: none;
+  font-weight: 600;
+  font-family: "Poppins", sans-serif;
+}
+
+.scan-ai-button::before {
+  margin-left: auto;
+}
+
+.scan-ai-button::after,
+.scan-ai-button::before {
+  content: "";
+  width: 0%;
+  height: 2px;
+  background: #f44336;
+  display: block;
+  transition: 0.5s;
+}
+
+.scan-ai-button:hover::after,
+.scan-ai-button:hover::before {
+  width: 100%;
+}

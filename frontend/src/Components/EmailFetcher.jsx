@@ -1,22 +1,17 @@
 import React, { useState, useEffect } from "react";
-import {
-  Button,
-  Input,
-  message,
-  Card,
-  Typography,
-  Spin,
-  Form,
-  Modal,
-} from "antd";
+import { Button, Input, message, Card, Typography, Spin, Form } from "antd";
 import axios from "axios";
 import queryString from "query-string";
-import EmailModal from "./EmailModal"; // Import the EmailModal component
+import EmailModal from "./EmailModal";
 import "../Assets/CSS/EmailFetcher.css";
 
 const { Title } = Typography;
 
-const EmailFetcher = ({ accessToken: initialAccessToken }) => {
+const EmailFetcher = ({
+  accessToken: initialAccessToken,
+  onEmailsFetched,
+  onScanWithAI,
+}) => {
   const [loading, setLoading] = useState(false);
   const [emails, setEmails] = useState([]);
   const [accessToken, setAccessToken] = useState(initialAccessToken);
@@ -67,7 +62,8 @@ const EmailFetcher = ({ accessToken: initialAccessToken }) => {
         message.success("Access token refreshed");
       }
 
-      setEmails(response.data.emails);
+      setEmails(response.data.emails || []);
+      onEmailsFetched(response.data.emails || []);
       setLoading(false);
       message.success("Emails fetched successfully!");
     } catch (error) {
@@ -122,17 +118,28 @@ const EmailFetcher = ({ accessToken: initialAccessToken }) => {
       {loading ? (
         <Spin size="large" className="loading-spinner" />
       ) : (
-        <div className="emails-list">
-          {emails.map((email, index) => (
-            <Card
-              key={index}
-              className="email-card"
-              onClick={() => handleEmailClick(email)}
+        <>
+          <div className="emails-list">
+            {emails.map((email, index) => (
+              <Card
+                key={index}
+                className="email-card"
+                onClick={() => handleEmailClick(email)}
+              >
+                <Title level={4}>{email.subject}</Title>
+              </Card>
+            ))}
+          </div>
+          {emails.length > 0 && (
+            <Button
+              type="primary"
+              className="scan-ai-button"
+              onClick={onScanWithAI}
             >
-              <Title level={4}>{email.subject}</Title>
-            </Card>
-          ))}
-        </div>
+              Scan with AI
+            </Button>
+          )}
+        </>
       )}
       {selectedEmail && (
         <EmailModal

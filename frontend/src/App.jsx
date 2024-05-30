@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Layout, Typography, message } from "antd";
 import LoginForm from "./Components/LoginForm";
 import EmailFetcher from "./Components/EmailFetcher";
+import ScanWithAI from "./Components/ScanWithAI"; // Import the new ScanWithAI component
 import "./Assets/CSS/main.css";
 
 const { Header, Content, Footer } = Layout;
@@ -10,6 +11,8 @@ const { Title } = Typography;
 const App = () => {
   const [formData, setFormData] = useState(null);
   const [accessToken, setAccessToken] = useState(null);
+  const [emails, setEmails] = useState([]);
+  const [view, setView] = useState("fetcher"); // State to manage the view
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -24,6 +27,15 @@ const App = () => {
     message.success("Login successful!");
   };
 
+  const handleEmailsFetched = (emails) => {
+    setEmails(emails);
+    setView("fetcher");
+  };
+
+  const handleScanWithAI = () => {
+    setView("scanner");
+  };
+
   return (
     <Layout className="layout">
       <Header className="header">
@@ -33,13 +45,17 @@ const App = () => {
         <div className="site-layout-content">
           {!formData && !accessToken ? (
             <LoginForm onSubmit={handleFormSubmit} />
-          ) : (
+          ) : view === "fetcher" ? (
             <EmailFetcher
               email={formData?.email}
               password={formData?.password}
               host={formData?.host}
               accessToken={accessToken}
+              onEmailsFetched={handleEmailsFetched}
+              onScanWithAI={handleScanWithAI} // Pass the handler to switch views
             />
+          ) : (
+            <ScanWithAI emails={emails} />
           )}
         </div>
       </Content>
