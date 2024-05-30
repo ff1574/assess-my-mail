@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Layout, Typography, message } from "antd";
 import LoginForm from "./Components/LoginForm";
 import EmailFetcher from "./Components/EmailFetcher";
-import ScanWithAI from "./Components/ScanWithAI"; // Import the new ScanWithAI component
+import ScanWithAI from "./Components/ScanWithAI";
 import "./Assets/CSS/main.css";
 
 const { Header, Content, Footer } = Layout;
@@ -12,7 +12,7 @@ const App = () => {
   const [formData, setFormData] = useState(null);
   const [accessToken, setAccessToken] = useState(null);
   const [emails, setEmails] = useState([]);
-  const [view, setView] = useState("fetcher"); // State to manage the view
+  const [view, setView] = useState("fetcher");
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -52,10 +52,10 @@ const App = () => {
               host={formData?.host}
               accessToken={accessToken}
               onEmailsFetched={handleEmailsFetched}
-              onScanWithAI={handleScanWithAI} // Pass the handler to switch views
+              onScanWithAI={handleScanWithAI}
             />
           ) : (
-            <ScanWithAI emails={emails} />
+            <ScanWithAI emails={emails} onBack={() => setView("fetcher")} />
           )}
         </div>
       </Content>
