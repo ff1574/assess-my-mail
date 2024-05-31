@@ -115,6 +115,17 @@ const EmailFetcher = ({
           </Button>
         </Form.Item>
       </Form>
+
+      {emails.length > 0 && (
+        <Button
+          type="primary"
+          className="scan-ai-button"
+          onClick={onScanWithAI}
+        >
+          Scan with AI
+        </Button>
+      )}
+      
       {loading ? (
         <Spin size="large" className="loading-spinner" />
       ) : (
@@ -130,15 +141,6 @@ const EmailFetcher = ({
               </Card>
             ))}
           </div>
-          {emails.length > 0 && (
-            <Button
-              type="primary"
-              className="scan-ai-button"
-              onClick={onScanWithAI}
-            >
-              Scan with AI
-            </Button>
-          )}
         </>
       )}
       {selectedEmail && (

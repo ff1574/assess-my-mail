@@ -13,11 +13,13 @@
     "axios": "^1.7.2",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
+    "dompurify": "^3.1.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "googleapis": "^137.1.0",
     "html-to-text": "^9.0.5",
     "imap-simple": "^5.1.0",
+    "jsdom": "^24.1.0",
     "mailparser": "^3.7.1",
     "openai": "^4.47.2"
   }

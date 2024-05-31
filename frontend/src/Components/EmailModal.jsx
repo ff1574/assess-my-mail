@@ -7,7 +7,7 @@ const EmailModal = ({ email, visible, onClose }) => {
   return (
     <Modal
       title={email.subject}
-      visible={visible}
+      open={visible}
       onCancel={onClose}
       footer={null}
       width={800}
