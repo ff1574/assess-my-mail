@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Button, Card, Typography, Spin, List, Progress, Modal } from "antd";
+import { Button, Card, Typography, Spin, List, Progress, Flex } from "antd";
 import axios from "axios";
+import SummaryModal from "./SummaryModal";
 import "../Assets/CSS/ScanWithAI.css";
 
 const { Title } = Typography;
@@ -30,6 +31,7 @@ const ScanWithAI = ({ emails, onBack }) => {
       }
       setProgress(progress);
       if (progress === 100) {
+        setLoading(false);
         setShowModal(true);
       }
     };
@@ -53,19 +55,35 @@ const ScanWithAI = ({ emails, onBack }) => {
     setShowModal(false);
   };
 
+  const handleReopenModal = () => {
+    setShowModal(true);
+  };
+
   return (
     <Card className="scan-ai-card">
       <Title level={2} className="scan-ai-title">
         Scan Emails with AI
       </Title>
-      <Button
-        type="primary"
-        className="scan-button"
-        onClick={handleScan}
-        disabled={loading}
-      >
-        Scan with AI
-      </Button>
+      <Flex className="scan-ai-button-container">
+        <Button className="back-button" onClick={onBack}>
+          Back
+        </Button>
+
+        <Button
+          type="primary"
+          className="scan-button"
+          onClick={handleScan}
+          disabled={loading}
+        >
+          Scan with AI
+        </Button>
+
+        {!showModal && (
+          <Button type="primary" onClick={handleReopenModal}>
+            Reopen Summary
+          </Button>
+        )}
+      </Flex>
       {loading && <Spin size="large" className="loading-spinner" />}
       <Progress percent={progress} />
       <List
@@ -84,24 +102,11 @@ const ScanWithAI = ({ emails, onBack }) => {
           </List.Item>
         )}
       />
-      <Button className="back-button" onClick={onBack}>
-        Back
-      </Button>
-      <Modal
-        title="Email Categories"
-        open={showModal}
-        onCancel={handleModalClose}
-        footer={[
-          <Button key="close" onClick={handleModalClose}>
-            Close
-          </Button>,
-        ]}
-      >
-        <p>INFORMATION: {categoriesCount.INFORMATION}</p>
-        <p>ADS & SPAM: {categoriesCount["ADS & SPAM"]}</p>
-        <p>SOCIAL: {categoriesCount.SOCIAL}</p>
-        <p>IMPORTANT: {categoriesCount.IMPORTANT}</p>
-      </Modal>
+      <SummaryModal
+        visible={showModal}
+        onClose={handleModalClose}
+        categoriesCount={categoriesCount}
+      />
     </Card>
   );
 };
