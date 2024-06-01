@@ -6,7 +6,7 @@ const { Title, Paragraph } = Typography;
 const EmailModal = ({ email, visible, onClose }) => {
   return (
     <Modal
-      title={email.subject}
+      title={email.from}
       open={visible}
       onCancel={onClose}
       footer={null}

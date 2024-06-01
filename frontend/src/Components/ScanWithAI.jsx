@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Button, Card, Typography, Spin, List, Progress, Flex } from "antd";
+import {
+  Button,
+  Card,
+  Typography,
+  Spin,
+  List,
+  Progress,
+  message,
+  Flex,
+} from "antd";
 import axios from "axios";
 import SummaryModal from "./SummaryModal";
 import "../Assets/CSS/ScanWithAI.css";
@@ -16,6 +25,7 @@ const ScanWithAI = ({ emails, onBack }) => {
     SOCIAL: 0,
     IMPORTANT: 0,
   });
+  const [sendersCount, setSendersCount] = useState({});
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
@@ -28,11 +38,28 @@ const ScanWithAI = ({ emails, onBack }) => {
           ...prevCount,
           [email.category]: prevCount[email.category] + 1,
         }));
+
+        setSendersCount((prevSenders) => {
+          const sender = email.from;
+          const category = email.category;
+          if (!prevSenders[category]) {
+            prevSenders[category] = {};
+          }
+          if (!prevSenders[category][sender]) {
+            prevSenders[category][sender] = 0;
+          }
+          prevSenders[category][sender] += 1;
+          return { ...prevSenders };
+        });
       }
       setProgress(progress);
       if (progress === 100) {
         setLoading(false);
         setShowModal(true);
+        message.success({
+          content: "Emails analyzed successfully!",
+          key: "scan",
+        });
       }
     };
 
@@ -44,8 +71,10 @@ const ScanWithAI = ({ emails, onBack }) => {
   const handleScan = async () => {
     setLoading(true);
     try {
+      message.loading({ content: "Analyzing emails...", key: "scan" });
       await axios.post("http://localhost:5000/analyze-emails", { emails });
     } catch (error) {
+      message.error({ content: "Error analyzing emails.", key: "scan" });
       console.error("Error analyzing emails:", error);
       setLoading(false);
     }
@@ -68,7 +97,6 @@ const ScanWithAI = ({ emails, onBack }) => {
         <Button className="back-button" onClick={onBack}>
           Back
         </Button>
-
         <Button
           type="primary"
           className="scan-button"
@@ -77,7 +105,6 @@ const ScanWithAI = ({ emails, onBack }) => {
         >
           Scan with AI
         </Button>
-
         {!showModal && (
           <Button type="primary" onClick={handleReopenModal}>
             Reopen Summary
@@ -106,6 +133,7 @@ const ScanWithAI = ({ emails, onBack }) => {
         visible={showModal}
         onClose={handleModalClose}
         categoriesCount={categoriesCount}
+        sendersCount={sendersCount}
       />
     </Card>
   );
