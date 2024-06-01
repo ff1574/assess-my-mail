@@ -45,7 +45,7 @@ const SummaryModal = ({ visible, onClose, categoriesCount, sendersCount }) => {
     <Modal
       title={
         selectedCategory
-          ? `${selectedCategory.label} Senders`
+          ? `${selectedCategory.label}`
           : "Email Categories"
       }
       open={visible}
