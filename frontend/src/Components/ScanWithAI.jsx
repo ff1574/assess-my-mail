@@ -105,11 +105,9 @@ const ScanWithAI = ({ emails, onBack }) => {
         >
           Scan with AI
         </Button>
-        {!showModal && (
-          <Button type="primary" onClick={handleReopenModal}>
-            Reopen Summary
-          </Button>
-        )}
+        <Button type="primary" onClick={handleReopenModal} disabled={showModal}>
+          Summary
+        </Button>
       </Flex>
       {loading && <Spin size="large" className="loading-spinner" />}
       <Progress percent={progress} />
@@ -134,6 +132,7 @@ const ScanWithAI = ({ emails, onBack }) => {
         onClose={handleModalClose}
         categoriesCount={categoriesCount}
         sendersCount={sendersCount}
+        analysisResults={analysisResults}
       />
     </Card>
   );

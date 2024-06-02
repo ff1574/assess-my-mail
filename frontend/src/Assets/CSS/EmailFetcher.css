@@ -8,6 +8,18 @@
   background-color: #f5f7fa;
 }
 
+.ant-card-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.email-number-fetch-container {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  margin: 20px 0;
+}
+
 .fetcher-title {
   text-align: center;
   margin-bottom: 24px;
@@ -15,8 +27,7 @@
 }
 
 .auth-button,
-.fetch-button,
-.scan-ai-button {
+.fetch-button {
   width: 100%;
   margin-top: 10px;
   background-color: #1890ff;
@@ -24,6 +35,59 @@
   color: #fff;
   border-radius: 4px;
 }
+
+.auth-button {
+  background-color: #45ce00;
+}
+
+.fetch-button {
+  margin: 0;
+  padding: 0 20px;
+}
+
+.ai-button {
+  margin: 12px auto;
+  border: none;
+  width: 30em;
+  height: 5em;
+  border-radius: 3em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 18px;
+  background: #00284e;
+  cursor: pointer;
+  transition: all 450ms ease-in-out;
+}
+
+.sparkle {
+  fill: #AAAAAA;
+  transition: all 800ms ease;
+}
+
+.text {
+  font-weight: 600;
+  color: #AAAAAA;
+  font-size: 20px;
+}
+
+.ai-button:hover {
+  background: linear-gradient(0deg,#A47CF3,#683FEA);
+  box-shadow: inset 0px 1px 0px 0px rgba(255, 255, 255, 0.4),
+  inset 0px -4px 0px 0px rgba(0, 0, 0, 0.2),
+  0px 0px 0px 4px rgba(255, 255, 255, 0.2),
+  0px 0px 180px 0px #9917FF;
+  transform: translateY(-2px);
+}
+
+.ai-button:hover .text {
+  color: white;
+}
+
+.ai-button:hover .sparkle {
+  fill: white;
+  transform: scale(1.2);
+} 
 
 .access-token-input {
   margin-top: 10px;

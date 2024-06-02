@@ -31,3 +31,26 @@
   color: gray;
   text-align: center;
 }
+
+.ant-modal-title {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.ant-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.ant-space {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.ant-space .ant-space {
+  flex-direction: row;
+}

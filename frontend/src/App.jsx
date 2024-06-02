@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Typography, message } from "antd";
+import { Layout, message } from "antd";
 import LoginForm from "./Components/LoginForm";
 import EmailFetcher from "./Components/EmailFetcher";
 import ScanWithAI from "./Components/ScanWithAI";
+import AppHeader from "./Components/Header";
+import AppFooter from "./Components/Footer";
 import "./Assets/CSS/main.css";
 
-const { Header, Content, Footer } = Layout;
-const { Title } = Typography;
+const { Content, Footer } = Layout;
 
 const App = () => {
   const [formData, setFormData] = useState(null);
@@ -38,9 +39,7 @@ const App = () => {
 
   return (
     <Layout className="layout">
-      <Header className="header">
-        <Title className="logo">AssessMyMail</Title>
-      </Header>
+      <AppHeader />
       <Content className="content">
         <div className="site-layout-content">
           {!formData && !accessToken ? (
@@ -59,9 +58,7 @@ const App = () => {
           )}
         </div>
       </Content>
-      <Footer style={{ textAlign: "center" }}>
-        AssessMyMail ©{new Date().getFullYear()}
-      </Footer>
+      <AppFooter />
     </Layout>
   );
 };

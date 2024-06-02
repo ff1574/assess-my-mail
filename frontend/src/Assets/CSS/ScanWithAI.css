@@ -23,23 +23,6 @@
   align-items: center;
 }
 
-.scan-ai-button {
-  display: block;
-  width: 100%;
-  margin: 20px 15px;
-  background: #1890ff;
-  color: white;
-  border: none;
-  padding: 10px;
-  border-radius: 5px;
-  font-size: 16px;
-  transition: background 0.3s ease;
-}
-
-.scan-ai-button:hover {
-  background: #40a9ff;
-}
-
 .loading-spinner {
   display: flex;
   justify-content: center;
