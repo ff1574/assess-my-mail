@@ -91,20 +91,25 @@ const EmailFetcher = ({
     try {
       const storedAccessToken = localStorage.getItem("accessToken");
       const storedRefreshToken = localStorage.getItem("refreshToken");
-      await axios.post("http://localhost:5000/revoke-token", {
+      const response = await axios.post("http://localhost:5000/revoke-token", {
         access_token: storedAccessToken,
         refresh_token: storedRefreshToken,
       });
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
-      localStorage.removeItem("expiryDate");
-      setAccessToken("");
-      setRefreshToken("");
-      setExpiryDate(null);
-      message.success("Tokens revoked successfully. Please re-authenticate.");
+
+      if (response.status === 200) {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("expiryDate");
+        setAccessToken("");
+        setRefreshToken("");
+        setExpiryDate(null);
+        message.success("Tokens revoked successfully. Please re-authenticate.");
+      } else {
+        throw new Error("Failed to revoke tokens");
+      }
     } catch (error) {
       console.error("Error revoking token:", error);
-      message.error("Failed to revoke tokens");
+      message.error("Failed to revoke tokens.");
     }
   };
 

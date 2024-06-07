@@ -11,14 +11,11 @@ const oauth2Client = new OAuth2(
 exports.revokeToken = async (req, res) => {
   const { access_token, refresh_token } = req.body;
 
-  let accessTokenRevoked = false;
-  let refreshTokenRevoked = false;
-
   if (access_token) {
     try {
       await oauth2Client.revokeToken(access_token);
-      accessTokenRevoked = true;
       console.log("Access token revoked successfully.");
+      return res.json({ success: true });
     } catch (error) {
       console.error("Error revoking access token:", error.message);
     }
@@ -27,18 +24,14 @@ exports.revokeToken = async (req, res) => {
   if (refresh_token) {
     try {
       await oauth2Client.revokeToken(refresh_token);
-      refreshTokenRevoked = true;
       console.log("Refresh token revoked successfully.");
+      return res.json({ success: true });
     } catch (error) {
       console.error("Error revoking refresh token:", error.message);
     }
   }
 
-  if (accessTokenRevoked || refreshTokenRevoked) {
-    res.json({ success: true });
-  } else {
-    res.status(500).json({ error: "Failed to revoke tokens" });
-  }
+  return res.status(500).json({ error: "Failed to revoke tokens" });
 };
 
 // Function to get auth URL
