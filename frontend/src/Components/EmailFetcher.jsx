@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Button, Input, message, Card, Typography, Spin, Form } from "antd";
-import { GoogleOutlined, MailOutlined } from "@ant-design/icons";
+import {
+  GoogleOutlined,
+  MailOutlined,
+  ReloadOutlined,
+} from "@ant-design/icons";
 import axios from "axios";
 import queryString from "query-string";
 import EmailModal from "./EmailModal";
@@ -83,15 +87,47 @@ const EmailFetcher = ({
     setSelectedEmail(null);
   };
 
+  const handleRevokeTokens = async () => {
+    try {
+      const storedAccessToken = localStorage.getItem("accessToken");
+      const storedRefreshToken = localStorage.getItem("refreshToken");
+      await axios.post("http://localhost:5000/revoke-token", {
+        access_token: storedAccessToken,
+        refresh_token: storedRefreshToken,
+      });
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("expiryDate");
+      setAccessToken("");
+      setRefreshToken("");
+      setExpiryDate(null);
+      message.success("Tokens revoked successfully. Please re-authenticate.");
+    } catch (error) {
+      console.error("Error revoking token:", error);
+      message.error("Failed to revoke tokens");
+    }
+  };
+
   return (
     <Card className="email-fetcher-card" bordered={false}>
       <Title level={2} className="fetcher-title">
         Fetched Emails
       </Title>
-      <Button type="primary" className="auth-button" onClick={handleAuth}>
-        <GoogleOutlined style={{ fontSize: "16px" }} />
-        Authenticate with Google
-      </Button>
+      <div className="auth-buttons-container">
+        <Button type="primary" className="auth-button" onClick={handleAuth}>
+          <GoogleOutlined style={{ fontSize: "16px" }} />
+          Authenticate with Google
+        </Button>
+        <Button
+          type="primary"
+          danger="true"
+          className="revoke-button"
+          onClick={handleRevokeTokens}
+        >
+          <ReloadOutlined style={{ fontSize: "16px" }} />
+          Revoke Tokens
+        </Button>
+      </div>
       <Input
         className="access-token-input"
         placeholder="Access token"
@@ -140,7 +176,6 @@ const EmailFetcher = ({
           >
             <path d="M10,21.236,6.755,14.745.264,11.5,6.755,8.255,10,1.764l3.245,6.491L19.736,11.5l-6.491,3.245ZM18,21l1.5,3L21,21l3-1.5L21,18l-1.5-3L18,18l-3,1.5ZM19.333,4.667,20.5,7l1.167-2.333L24,3.5,21.667,2.333,20.5,0,19.333,2.333,17,3.5Z"></path>
           </svg>
-
           <span className="text">AI Analysis</span>
         </button>
       )}

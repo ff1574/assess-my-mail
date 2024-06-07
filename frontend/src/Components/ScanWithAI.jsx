@@ -9,11 +9,35 @@ import {
   message,
   Flex,
 } from "antd";
+import {
+  InfoCircleOutlined,
+  TagOutlined,
+  ThunderboltOutlined,
+  SmileOutlined,
+} from "@ant-design/icons";
 import axios from "axios";
 import SummaryModal from "./SummaryModal";
 import "../Assets/CSS/ScanWithAI.css";
 
 const { Title } = Typography;
+
+const categoryStyles = {
+  INFORMATION: "information-card",
+  "ADS & SPAM": "ads-spam-card",
+  SOCIAL: "social-card",
+  IMPORTANT: "important-card",
+};
+
+const categoryIcons = {
+  INFORMATION: (
+    <InfoCircleOutlined style={{ marginRight: "20px", color: "blue" }} />
+  ),
+  "ADS & SPAM": <TagOutlined style={{ marginRight: "20px", color: "red" }} />,
+  SOCIAL: <SmileOutlined style={{ marginRight: "20px", color: "green" }} />,
+  IMPORTANT: (
+    <ThunderboltOutlined style={{ marginRight: "20px", color: "gold" }} />
+  ),
+};
 
 const ScanWithAI = ({ emails, onBack }) => {
   const [loading, setLoading] = useState(false);
@@ -110,13 +134,20 @@ const ScanWithAI = ({ emails, onBack }) => {
         </Button>
       </Flex>
       {loading && <Spin size="large" className="loading-spinner" />}
-      <Progress percent={progress} />
+      <Progress percent={parseFloat(progress).toFixed(2)} />
       <List
         className="analysis-results"
         dataSource={analysisResults}
         renderItem={(result) => (
           <List.Item>
-            <Card title={result.subject}>
+            <Card
+              className={categoryStyles[result.category]}
+              title={
+                <div className="card-title">
+                  {categoryIcons[result.category]} {result.subject}
+                </div>
+              }
+            >
               <p>
                 <strong>Category:</strong> {result.category}
               </p>

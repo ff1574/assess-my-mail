@@ -26,6 +26,12 @@
   font-weight: 600;
 }
 
+.auth-buttons-container {
+  display: flex;
+  align-items: baseline;
+  gap: 15px;
+}
+
 .auth-button,
 .fetch-button {
   width: 100%;

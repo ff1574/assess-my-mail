@@ -54,3 +54,7 @@
 .ant-space .ant-space {
   flex-direction: row;
 }
+
+.ant-card-body {
+  overflow-wrap: anywhere;
+}

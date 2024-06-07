@@ -1,5 +1,16 @@
 import React, { useState } from "react";
-import { Modal, Button, Row, Col, List, Typography, Space, Card } from "antd";
+import axios from "axios";
+import {
+  Modal,
+  Button,
+  Row,
+  Col,
+  List,
+  Typography,
+  Space,
+  Card,
+  message,
+} from "antd";
 import {
   InfoCircleOutlined,
   TagOutlined,
@@ -8,7 +19,7 @@ import {
 } from "@ant-design/icons";
 import "../Assets/CSS/SummaryModal.css";
 
-const { Text, Title } = Typography;
+const { Text } = Typography;
 
 const categories = [
   {
@@ -38,6 +49,9 @@ const SummaryModal = ({
   categoriesCount,
   sendersCount,
   analysisResults,
+  accessToken,
+  refreshToken,
+  expiryDate,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSender, setSelectedSender] = useState(null);
@@ -62,9 +76,29 @@ const SummaryModal = ({
     setSelectedSender(sender);
   };
 
-  const handleBlockSender = (sender) => {
-    console.log(`Blocking sender ${sender}`);
-    // Implement the functionality to block the sender
+  const handleMuteSender = async (sender) => {
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      const refreshToken = localStorage.getItem("refreshToken");
+      const expiryDate = localStorage.getItem("expiryDate");
+
+      console.log(`Muting sender ${sender}`);
+      const response = await axios.post("http://localhost:5000/mute-sender", {
+        access_token: accessToken,
+        refresh_token: refreshToken,
+        expiry_date: expiryDate,
+        sender: sender,
+      });
+
+      if (response.data.success) {
+        message.success(`Sender ${sender} muted successfully`);
+      } else {
+        throw new Error("Failed to mute sender");
+      }
+    } catch (error) {
+      console.error("Error muting sender:", error);
+      message.error("Failed to mute sender");
+    }
   };
 
   return (
@@ -134,10 +168,10 @@ const SummaryModal = ({
                     <Button
                       size="small"
                       type="primary"
-                      danger="true"
-                      onClick={() => handleBlockSender(sender)}
+                      danger
+                      onClick={() => handleMuteSender(sender)}
                     >
-                      Block Sender
+                      Mute Sender
                     </Button>
                   </Space>
                 </Space>

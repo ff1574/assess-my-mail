@@ -39,3 +39,26 @@
   color: #333;
   line-height: 1.6;
 }
+
+.card-title {
+  display: flex;
+  flex-direction: row;
+  white-space: pre-wrap;
+  padding: 15px 0;
+}
+
+.information-card {
+  border: 1px solid blue;
+}
+
+.ads-spam-card {
+  border: 1px solid red;
+}
+
+.social-card {
+  border: 1px solid green;
+}
+
+.important-card {
+  border: 1px solid gold;
+}
