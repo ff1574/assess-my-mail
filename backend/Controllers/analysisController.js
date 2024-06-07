@@ -40,7 +40,7 @@ function sendProgressUpdate(email, progress) {
   clients.forEach((client) => client.write(`data: ${data}\n\n`));
 }
 
-async function analyzeEmailWithRetry(email, retries = 3) {
+async function analyzeEmailWithRetry(email, retries = 5) {
   while (retries > 0) {
     try {
       const completion = await openai.chat.completions.create({

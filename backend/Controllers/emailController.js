@@ -99,3 +99,57 @@ exports.fetchEmails = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch emails" });
   }
 };
+
+// Helper function to create a delay
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// Function to mute senders by marking their messages as spam
+exports.muteSender = async (req, res) => {
+  const { access_token, refresh_token, expiry_date, sender } = req.body;
+
+  oauth2Client.setCredentials({ access_token, refresh_token, expiry_date });
+
+  try {
+    if (expiry_date && expiry_date < Date.now()) {
+      const tokens = await oauth2Client.refreshAccessToken();
+      oauth2Client.setCredentials(tokens.credentials);
+      console.log("Access token refreshed");
+    }
+
+    const gmail = google.gmail({ version: "v1", auth: oauth2Client });
+
+    // Fetch all messages from the sender
+    const response = await gmail.users.messages.list({
+      userId: "me",
+      q: `from:${sender}`,
+    });
+
+    const messages = response.data.messages || [];
+
+    // Mark each message as spam with a delay
+    for (const message of messages) {
+      await gmail.users.messages.modify({
+        userId: "me",
+        id: message.id,
+        requestBody: {
+          addLabelIds: ["SPAM"],
+          removeLabelIds: ["INBOX"],
+        },
+      });
+      await delay(50); // Add a 50ms delay between each request
+    }
+
+    res.json({
+      success: true,
+      message: `Marked ${messages.length} messages as spam.`,
+    });
+  } catch (error) {
+    console.error("Error muting sender:", error);
+    if (error.response) {
+      console.error("Error details:", error.response.data);
+    }
+    res
+      .status(500)
+      .json({ error: "Failed to mute sender", details: error.message });
+  }
+};
