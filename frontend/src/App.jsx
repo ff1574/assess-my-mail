@@ -7,7 +7,7 @@ import AppHeader from "./Components/Header";
 import AppFooter from "./Components/Footer";
 import "./Assets/CSS/main.css";
 
-const { Content, Footer } = Layout;
+const { Content } = Layout;
 
 const App = () => {
   const [formData, setFormData] = useState(null);
