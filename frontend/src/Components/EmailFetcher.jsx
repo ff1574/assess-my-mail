@@ -27,18 +27,22 @@ const EmailFetcher = ({
 
   useEffect(() => {
     const params = queryString.parse(window.location.search);
+
     if (params.access_token) {
       setAccessToken(params.access_token);
       setRefreshToken(params.refresh_token);
       setExpiryDate(params.expiry_date);
+
       localStorage.setItem("accessToken", params.access_token);
       localStorage.setItem("refreshToken", params.refresh_token);
       localStorage.setItem("expiryDate", params.expiry_date);
+
       window.history.replaceState({}, document.title, "/"); // Reset the URL
     } else {
       const storedToken = localStorage.getItem("accessToken");
       const storedRefreshToken = localStorage.getItem("refreshToken");
       const storedExpiryDate = localStorage.getItem("expiryDate");
+
       if (storedToken && storedRefreshToken && storedExpiryDate) {
         setAccessToken(storedToken);
         setRefreshToken(storedRefreshToken);
