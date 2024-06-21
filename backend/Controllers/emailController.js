@@ -1,5 +1,5 @@
 const { google } = require("googleapis");
-const decodeBase64Url = require("../Helpers/decodeBase64Url");
+const decodeBase64Url = require("../Util/decodeBase64Url");
 const { htmlToText } = require("html-to-text");
 const { OAuth2 } = google.auth;
 

@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { body, validationResult } = require("express-validator");
-const db = require("../Helpers/db");
+const db = require("../Util/db");
 
 exports.registerCustomer = [
   body("email").isEmail().withMessage("Enter a valid email"),
