@@ -43,9 +43,16 @@ exports.registerCustomer = [
         [1, name, email, hashedPassword]
       );
 
+      // Generate JWT
+      const payload = { customer_id: result.insertId };
+      const token = jwt.sign(payload, process.env.JWT_SECRET, {
+        expiresIn: "1h",
+      });
+
       res.status(201).json({
         message: "Customer registered successfully",
         customerId: result.insertId,
+        token,
       });
     } catch (error) {
       console.error("Error registering customer:", error);
