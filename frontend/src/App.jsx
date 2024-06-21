@@ -36,7 +36,6 @@ const AppContent = () => {
 
   const handleEmailsFetched = (emails) => {
     setEmails(emails);
-    setView("fetcher");
   };
 
   const handleScanWithAI = () => {
@@ -49,6 +48,7 @@ const AppContent = () => {
         <LoginForm />
       ) : view === "fetcher" ? (
         <EmailFetcher
+          emails={emails}
           onEmailsFetched={handleEmailsFetched}
           onScanWithAI={handleScanWithAI}
         />

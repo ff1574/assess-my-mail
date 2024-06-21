@@ -16,9 +16,10 @@ const EmailFetcher = ({
   accessToken: initialAccessToken,
   onEmailsFetched,
   onScanWithAI,
+  emails: initialEmails
 }) => {
   const [loading, setLoading] = useState(false);
-  const [emails, setEmails] = useState([]);
+  const [emails, setEmails] = useState(initialEmails || []);
   const [accessToken, setAccessToken] = useState(initialAccessToken);
   const [refreshToken, setRefreshToken] = useState("");
   const [expiryDate, setExpiryDate] = useState(null);
