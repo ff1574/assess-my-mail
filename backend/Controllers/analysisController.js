@@ -47,16 +47,38 @@ async function analyzeEmailWithRetry(email, retries = 5) {
         messages: [
           {
             role: "system",
-            content: `You are an assessor of emails. You have a simple task. You will be shown an email, and you need to scan through it and decide into which of the following categories it fits in: "INFORMATION, ADS & SPAM, SOCIAL, IMPORTANT". If the email is any of the categories except ads and spam, record any of the important information like place, date, time, people involved, etc. 
+            content: `You are an email assessor with the task of categorizing emails into one of the following categories: INFORMATION, ADS & SPAM, SOCIAL, IMPORTANT. Your responsibilities are:
 
-            Additional information: You need to carefully choose which categories you place the mails in. Work related mails should fall either into INFORMATION or IMPORTANT categories. Emails should be marked as IMPORTANT only if they are very important and need immediate or almost immediate attention, like a meeting reminder or a deadline reminder.
+            - Carefully determine the category of each email. Work-related emails should be categorized as INFORMATION or IMPORTANT. Emails should be marked as IMPORTANT only if they require immediate or near-immediate attention, such as meeting reminders or deadlines. Social emails are non-work-related emails, such as personal messages or newsletters. Ads & Spam emails are unsolicited emails or promotional content.
+
+            - DATE and TIME fields should be in the format "YYYY-MM-DD" and "HH:MM" (24-hour format), only include the time if it is the time of the event, not when the email was received.
+
+            - If the email is not in English, translate it to English before proceeding with the analysis.
+
+            - If the corresponding fields are not present in the email, mark them as "N/A".
+
+            Strict response format:
+
+            CATEGORY:
+            SUBJECT:
+            TASK:
+            DATE:
+            TIME:
+            PLACE:
+            PEOPLE:
+
+            Example response when missing TASK and PEOPLE fields:
+
+            CATEGORY: INFORMATION
+            SUBJECT: Meeting Reminder
+            TASK: N/A
+            DATE: 2022-01-10
+            TIME: 10:00 AM
+            PLACE: Conference Room
+            PEOPLE: N/A
+        
             
-            You will return all of the messages strictly in this format:
-            
-            CATEGORY
-            [Additional info if applicable]
-            
-            Keep your responses short and to the point.`,
+            Keep your responses concise and relevant.`,
           },
           {
             role: "user",
@@ -66,15 +88,47 @@ async function analyzeEmailWithRetry(email, retries = 5) {
         model: "gpt-4o",
       });
 
-      const analysisResult = completion.choices[0].message.content;
-
-      // Extract category from the analysis result
-      const category = analysisResult.split("\n")[0];
+      const analysisResult = completion.choices[0].message.content.split("\n");
+      console.log(`Sender: ${email.from}\nAnalysis result: ${analysisResult}`);
+      const category =
+        analysisResult
+          .find((line) => line.startsWith("CATEGORY"))
+          ?.split(": ")[1] || "";
 
       if (validCategories.includes(category)) {
+        const parsedResult = {
+          category,
+          subject:
+            analysisResult
+              .find((line) => line.startsWith("SUBJECT"))
+              ?.split(": ")[1] || "",
+          task:
+            analysisResult
+              .find((line) => line.startsWith("TASK"))
+              ?.split(": ")[1] || "",
+          date:
+            analysisResult
+              .find((line) => line.startsWith("DATE"))
+              ?.split(": ")[1] || "",
+          time:
+            analysisResult
+              .find((line) => line.startsWith("TIME"))
+              ?.split(": ")[1] || "",
+          place:
+            analysisResult
+              .find((line) => line.startsWith("PLACE"))
+              ?.split(": ")[1] || "",
+          people:
+            analysisResult
+              .find((line) => line.startsWith("PEOPLE"))
+              ?.split(": ")[1] || "",
+        };
+
+        console.log("\n\nParsed result:", parsedResult, "\n\n");
+
         return {
           ...email,
-          analysis: analysisResult,
+          analysis: parsedResult,
           category,
         };
       }
@@ -83,6 +137,7 @@ async function analyzeEmailWithRetry(email, retries = 5) {
     }
 
     retries--;
+    console.log("Failed analysis, email content:", email.body);
   }
 
   throw new Error("Failed to analyze email correctly after multiple attempts.");
