@@ -101,6 +101,49 @@ const SummaryModal = ({
     }
   };
 
+  const handleAddToCalendar = async (email) => {
+    try {
+      const event = {
+        summary: email.analysis.subject,
+        description: email.body,
+        start: {
+          dateTime: email.analysis.date
+            ? new Date(email.analysis.date).toISOString()
+            : new Date().toISOString(), // Use email date if available
+          timeZone: "America/Los_Angeles",
+        },
+        end: {
+          dateTime: email.analysis.date
+            ? new Date(
+                new Date(email.analysis.date).getTime() + 60 * 60 * 1000
+              ).toISOString()
+            : new Date(Date.now() + 60 * 60 * 1000).toISOString(), // Add 1 hour to start time if no end time
+          timeZone: "America/Los_Angeles",
+        },
+      };
+
+      const accessToken = localStorage.getItem("accessToken");
+      const refreshToken = localStorage.getItem("refreshToken");
+      const expiryDate = localStorage.getItem("expiryDate");
+
+      const response = await axios.post("http://localhost:5000/add-event", {
+        access_token: accessToken,
+        refresh_token: refreshToken,
+        expiry_date: expiryDate,
+        event,
+      });
+
+      if (response.data.success) {
+        message.success("Event added to Google Calendar successfully");
+      } else {
+        throw new Error("Failed to add event to calendar");
+      }
+    } catch (error) {
+      console.error("Error adding event to calendar:", error);
+      message.error("Failed to add event to calendar");
+    }
+  };
+
   return (
     <Modal
       title={
@@ -139,6 +182,33 @@ const SummaryModal = ({
                   <p>
                     <strong>Body:</strong> {email.body}
                   </p>
+                  <p>
+                    <strong>Category:</strong> {email.analysis.category}
+                  </p>
+                  <p>
+                    <strong>Subject:</strong> {email.analysis.subject}
+                  </p>
+                  <p>
+                    <strong>Task:</strong> {email.analysis.task}
+                  </p>
+                  <p>
+                    <strong>Date:</strong> {email.analysis.date}
+                  </p>
+                  <p>
+                    <strong>Time:</strong> {email.analysis.time}
+                  </p>
+                  <p>
+                    <strong>Place:</strong> {email.analysis.place}
+                  </p>
+                  <p>
+                    <strong>People:</strong> {email.analysis.people}
+                  </p>
+                  <Button
+                    type="primary"
+                    onClick={() => handleAddToCalendar(email)}
+                  >
+                    Add to Google Calendar
+                  </Button>
                 </Card>
               </List.Item>
             )}

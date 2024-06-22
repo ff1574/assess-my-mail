@@ -112,6 +112,25 @@ const ScanWithAI = ({ emails, onBack }) => {
     setShowModal(true);
   };
 
+  const renderAnalysis = (analysis) => {
+    const fields = [
+      { label: "Subject", value: analysis.subject },
+      { label: "Task", value: analysis.task },
+      { label: "Date", value: analysis.date },
+      { label: "Time", value: analysis.time },
+      { label: "Place", value: analysis.place },
+      { label: "People", value: analysis.people },
+    ];
+
+    return fields
+      .filter((field) => field.value && field.value !== "N/A")
+      .map((field, index) => (
+        <p key={index}>
+          <strong>{field.label}:</strong> {field.value}
+        </p>
+      ));
+  };
+
   return (
     <Card className="scan-ai-card">
       <Title level={2} className="scan-ai-title">
@@ -151,9 +170,7 @@ const ScanWithAI = ({ emails, onBack }) => {
               <p>
                 <strong>Category:</strong> {result.category}
               </p>
-              <p>
-                <strong>Details:</strong> {result.analysis}
-              </p>
+              {renderAnalysis(result.analysis)}
             </Card>
           </List.Item>
         )}

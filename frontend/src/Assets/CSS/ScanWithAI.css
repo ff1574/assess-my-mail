@@ -48,17 +48,21 @@
 }
 
 .information-card {
+  width: 100%;
   border: 1px solid blue;
 }
 
 .ads-spam-card {
+  width: 100%;
   border: 1px solid red;
 }
 
 .social-card {
+  width: 100%;
   border: 1px solid green;
 }
 
 .important-card {
+  width: 100%;
   border: 1px solid gold;
 }
