@@ -1,4 +1,5 @@
 const { OpenAI } = require("openai");
+const getFormattedDate = require("../Util/getFormattedDate");
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -82,14 +83,13 @@ async function analyzeEmailWithRetry(email, retries = 5) {
           },
           {
             role: "user",
-            content: `Analyze this email: \nSender: ${email.from}\nBody: ${email.body}`,
+            content: `Analyze this email: \nSender: ${email.from}\nToday's date: ${getFormattedDate()}\nDate of receival: ${email.date}\nBody: ${email.body}`,
           },
         ],
         model: "gpt-4o",
       });
 
       const analysisResult = completion.choices[0].message.content.split("\n");
-      console.log(`Sender: ${email.from}\nAnalysis result: ${analysisResult}`);
       const category =
         analysisResult
           .find((line) => line.startsWith("CATEGORY"))
