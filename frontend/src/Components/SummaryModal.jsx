@@ -17,6 +17,7 @@ import {
   ThunderboltOutlined,
   SmileOutlined,
 } from "@ant-design/icons";
+import CalendarEditModal from "./CalendarEditModal";
 import "../Assets/CSS/SummaryModal.css";
 
 const { Text } = Typography;
@@ -49,13 +50,12 @@ const SummaryModal = ({
   categoriesCount,
   sendersCount,
   analysisResults,
-  accessToken,
-  refreshToken,
-  expiryDate,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSender, setSelectedSender] = useState(null);
   const [selectedEmails, setSelectedEmails] = useState([]);
+  const [calendarModalVisible, setCalendarModalVisible] = useState(false);
+  const [selectedEmail, setSelectedEmail] = useState(null);
 
   const handleCategoryClick = (category) => {
     setSelectedCategory(category);
@@ -87,7 +87,7 @@ const SummaryModal = ({
         access_token: accessToken,
         refresh_token: refreshToken,
         expiry_date: expiryDate,
-        sender: sender,
+        sender,
       });
 
       if (response.data.success) {
@@ -101,47 +101,14 @@ const SummaryModal = ({
     }
   };
 
-  const handleAddToCalendar = async (email) => {
-    try {
-      const event = {
-        summary: email.analysis.subject,
-        description: email.body,
-        start: {
-          dateTime: email.analysis.date
-            ? new Date(email.analysis.date).toISOString()
-            : new Date().toISOString(), // Use email date if available
-          timeZone: "America/Los_Angeles",
-        },
-        end: {
-          dateTime: email.analysis.date
-            ? new Date(
-                new Date(email.analysis.date).getTime() + 60 * 60 * 1000
-              ).toISOString()
-            : new Date(Date.now() + 60 * 60 * 1000).toISOString(), // Add 1 hour to start time if no end time
-          timeZone: "America/Los_Angeles",
-        },
-      };
+  const handleAddToCalendar = (email) => {
+    setSelectedEmail(email);
+    setCalendarModalVisible(true);
+  };
 
-      const accessToken = localStorage.getItem("accessToken");
-      const refreshToken = localStorage.getItem("refreshToken");
-      const expiryDate = localStorage.getItem("expiryDate");
-
-      const response = await axios.post("http://localhost:5000/add-event", {
-        access_token: accessToken,
-        refresh_token: refreshToken,
-        expiry_date: expiryDate,
-        event,
-      });
-
-      if (response.data.success) {
-        message.success("Event added to Google Calendar successfully");
-      } else {
-        throw new Error("Failed to add event to calendar");
-      }
-    } catch (error) {
-      console.error("Error adding event to calendar:", error);
-      message.error("Failed to add event to calendar");
-    }
+  const closeCalendarModal = () => {
+    setCalendarModalVisible(false);
+    setSelectedEmail(null);
   };
 
   return (
@@ -272,6 +239,13 @@ const SummaryModal = ({
             </Col>
           ))}
         </Row>
+      )}
+      {selectedEmail && (
+        <CalendarEditModal
+          visible={calendarModalVisible}
+          onClose={closeCalendarModal}
+          email={selectedEmail}
+        />
       )}
     </Modal>
   );
