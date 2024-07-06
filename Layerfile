@@ -1,0 +1,44 @@
+# Base image for Ubuntu with Node.js and other dependencies
+FROM vm/ubuntu:22.04
+
+# Install Node.js and other dependencies
+RUN curl -fSsL https://deb.nodesource.com/setup_20.x | bash && \
+    apt-get install -y nodejs python3 make gcc build-essential && \
+    rm -f /etc/apt/sources.list.d/nodesource.list
+
+# Set memory and environment variables
+MEMORY 2G
+ENV NODE_OPTIONS=--max-old-space-size=8192
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the entire repository into the working directory
+COPY . .
+
+# Create the environment variable files for frontend and backend
+RUN echo "REACT_APP_GOOGLE_CLIENT_ID=603380482913-1khnop8n36rgpvft4pikieceft6d31nj.apps.googleusercontent.com\nREACT_APP_OPENAI_API_KEY=sk-proj-te9vCukBhC7K5YV2ydypT3BlbkFJuWV553DOZ80lztKW7RbK" > /app/frontend/.env
+RUN echo "# Google Auth Keys\nGOOGLE_CLIENT_ID=603380482913-1khnop8n36rgpvft4pikieceft6d31nj.apps.googleusercontent.com\nGOOGLE_CLIENT_SECRET=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\nGOOGLE_REDIRECT_URI=http://localhost:5000/oauth2callback\n\n# OpenAI API Key\nOPENAI_API_KEY=sk-proj-dd3yuz2RfWUjow0po07KT3BlbkFJiLAHBHNK66VrNtcuWfZH\n\n# MySQL Database\nDB_HOST=assess-my-mail-assess-my-mail.e.aivencloud.com\nDB_PORT=23283\nDB_USER=avnadmin\nDB_PASSWORD=AVNS_6ukCTEObE2DCCxwAlBW\nDB_NAME=AssessMyMail\nDB_URI=mysql://avnadmin:AVNS_6ukCTEObE2DCCxwAlBW@assess-my-mail-assess-my-mail.e.aivencloud.com:23283/defaultdb?ssl-mode=REQUIRED\n\n# JWT Secret\nJWT_SECRET=JWT_035816120573856" > /app/backend/.env
+
+# Install frontend dependencies and build the frontend
+WORKDIR /app/frontend
+RUN npm install
+RUN npm run build
+
+# Install backend dependencies
+WORKDIR /app/backend
+RUN npm install
+
+# Start the backend server in the background
+RUN BACKGROUND npm run start
+
+# Install a simple HTTP server to serve the frontend build files
+RUN npm install -g http-server
+
+# Start the HTTP server to serve the frontend on port 3000
+WORKDIR /app/frontend/build
+RUN BACKGROUND http-server -p 3000
+
+# Create a unique link to share the app in this runner.
+# Every time someone clicks the link, we'll wake up this staging server.
+EXPOSE WEBSITE http://localhost:3000
