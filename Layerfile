@@ -43,7 +43,7 @@ RUN BACKGROUND npm run start
 RUN npm install -g http-server
 
 # Obtain SSL certificate using Certbot (ensure DNS records are correctly set up)
-RUN certbot certonly --standalone --non-interactive --agree-tos --email franko.fister@gmail.com -d assess-my-mail.onwebapp.io
+RUN certbot certonly --standalone --non-interactive --agree-tos --email franko.fister@gmail.com -d assess-my-mail.onwebapp.io --debug-challenges -v --dry-run
 
 # Copy Nginx configuration file
 COPY ./nginx.conf /etc/nginx/nginx.conf
