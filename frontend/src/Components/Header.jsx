@@ -1,21 +1,35 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Layout, Typography, Button, Popover } from "antd";
-import { MenuOutlined, LogoutOutlined } from "@ant-design/icons";
+import { MenuOutlined, LogoutOutlined, StarOutlined } from "@ant-design/icons";
 import AuthContext from "../Util/authContext";
+import TierModal from "./TierModal";
 import "../Assets/CSS/Header.css";
 
 const { Header } = Layout;
 const { Title } = Typography;
 
-const AppHeader = () => {
+const AppHeader = ({ onOpenTierModal }) => {
   const { logout } = useContext(AuthContext);
 
   const menuContent = (
     <div className="menu-content">
-      <Button className="logout-button" type="text" danger="true" icon={<LogoutOutlined />} onClick={logout}>
+      <Button
+        className="tier-button"
+        type="text"
+        icon={<StarOutlined />}
+        onClick={onOpenTierModal}
+      >
+        Choose Plan
+      </Button>
+      <Button
+        className="logout-button"
+        type="text"
+        // danger="true"
+        icon={<LogoutOutlined />}
+        onClick={logout}
+      >
         Logout
       </Button>
-      {/* Add more buttons here in the future */}
     </div>
   );
 

@@ -3,6 +3,7 @@ import { Layout } from "antd";
 import LoginForm from "./Components/LoginForm";
 import EmailFetcher from "./Components/EmailFetcher";
 import ScanWithAI from "./Components/ScanWithAI";
+import TierModal from "./Components/TierModal";
 import AppHeader from "./Components/Header";
 import AppFooter from "./Components/Footer";
 import AuthContext, { AuthProvider } from "./Util/authContext";
@@ -14,15 +15,26 @@ const { Content } = Layout;
 setupAxiosInterceptors();
 
 const App = () => {
+  const [tierModalVisible, setTierModalVisible] = useState(false);
+
+  const handleOpenTierModal = () => {
+    setTierModalVisible(true);
+  };
+
+  const handleCloseTierModal = () => {
+    setTierModalVisible(false);
+  };
+
   return (
     <AuthProvider>
       <Layout className="layout">
-        <AppHeader />
+        <AppHeader onOpenTierModal={handleOpenTierModal} />
         <Content className="content">
           <div className="site-layout-content">
             <AppContent />
           </div>
         </Content>
+        <TierModal visible={tierModalVisible} onCancel={handleCloseTierModal} />
         <AppFooter />
       </Layout>
     </AuthProvider>

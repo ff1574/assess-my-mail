@@ -47,3 +47,15 @@
 .layout {
   min-height: 100vh;
 }
+
+.tier-button {
+  background-color: #1a2bc4;
+  border-color: #1a2bc4;
+  color: white;
+}
+
+.logout-button {
+  background-color: #f5222d;
+  border-color: #f5222d;
+  color: white;
+}

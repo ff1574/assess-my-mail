@@ -16,7 +16,7 @@ const EmailFetcher = ({
   accessToken: initialAccessToken,
   onEmailsFetched,
   onScanWithAI,
-  emails: initialEmails
+  emails: initialEmails,
 }) => {
   const [loading, setLoading] = useState(false);
   const [emails, setEmails] = useState(initialEmails || []);
@@ -24,6 +24,8 @@ const EmailFetcher = ({
   const [refreshToken, setRefreshToken] = useState("");
   const [expiryDate, setExpiryDate] = useState(null);
   const [maxResults, setMaxResults] = useState(10);
+  const [start, setStart] = useState(1);
+  const [end, setEnd] = useState(20);
   const [selectedEmail, setSelectedEmail] = useState(null);
 
   useEffect(() => {
@@ -64,7 +66,8 @@ const EmailFetcher = ({
         access_token: accessToken,
         refresh_token: refreshToken,
         expiry_date: expiryDate,
-        maxResults: maxResults,
+        start: start,
+        end: end,
       });
 
       if (response.data.newAccessToken) {
@@ -149,15 +152,20 @@ const EmailFetcher = ({
         layout="inline"
         style={{ marginBottom: 16 }}
       >
-        <Form.Item
-          label={<span style={{ fontSize: "18px" }}>Number of Emails</span>}
-        >
+        <Form.Item label={<span style={{ fontSize: "18px" }}>Start</span>}>
           <Input
             type="number"
-            value={maxResults}
-            onChange={(e) => setMaxResults(Number(e.target.value))}
+            value={start}
+            onChange={(e) => setStart(Number(e.target.value))}
             min={1}
-            max={1000}
+          />
+        </Form.Item>
+        <Form.Item label={<span style={{ fontSize: "18px" }}>End</span>}>
+          <Input
+            type="number"
+            value={end}
+            onChange={(e) => setEnd(Number(e.target.value))}
+            min={1}
           />
         </Form.Item>
         <Form.Item>
