@@ -86,7 +86,7 @@ async function analyzeEmailWithRetry(email, retries = 5) {
             content: `Analyze this email: \nSender: ${email.from}\nToday's date: ${getFormattedDate()}\nDate of receival: ${email.date}\nBody: ${email.body}`,
           },
         ],
-        model: "gpt-4o",
+        model: "gpt-3.5-turbo",
       });
 
       const analysisResult = completion.choices[0].message.content.split("\n");
@@ -137,7 +137,7 @@ async function analyzeEmailWithRetry(email, retries = 5) {
     }
 
     retries--;
-    console.log("Failed analysis, email content:", email.body);
+    console.log("Failed analysis, email content:\n\n", email.body, "\n\nEmail subject:\n\n", email.subject, "\n\nEmail sender:\n\n", email.from);
   }
 
   throw new Error("Failed to analyze email correctly after multiple attempts.");

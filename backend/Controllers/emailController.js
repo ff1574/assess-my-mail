@@ -10,7 +10,7 @@ const oauth2Client = new OAuth2(
 );
 
 exports.fetchEmails = async (req, res) => {
-  const { access_token, refresh_token, expiry_date, maxResults } = req.body;
+  const { access_token, refresh_token, expiry_date, start, end } = req.body;
   oauth2Client.setCredentials({ access_token, refresh_token, expiry_date });
 
   try {
@@ -24,25 +24,33 @@ exports.fetchEmails = async (req, res) => {
 
     let allMessages = [];
     let nextPageToken = null;
+    let fetchedCount = 0;
 
-    while (allMessages.length < maxResults) {
+    const totalEmailsToFetch = end;
+
+    while (allMessages.length < totalEmailsToFetch) {
       const response = await gmail.users.messages.list({
         userId: "me",
-        maxResults: Math.min(maxResults - allMessages.length, 250),
+        maxResults: Math.min(totalEmailsToFetch - allMessages.length, 250),
         pageToken: nextPageToken,
+        q: "-from:me",
       });
 
       const messages = response.data.messages || [];
       allMessages = allMessages.concat(messages);
       nextPageToken = response.data.nextPageToken;
 
-      if (!nextPageToken) {
+      fetchedCount += messages.length;
+
+      if (!nextPageToken || fetchedCount >= end) {
         break;
       }
     }
 
+    const messagesToFetch = allMessages.slice(start - 1, end);
+
     const fetchedEmails = await Promise.all(
-      allMessages.slice(0, maxResults).map(async (message) => {
+      messagesToFetch.map(async (message) => {
         const msg = await gmail.users.messages.get({
           userId: "me",
           id: message.id,
